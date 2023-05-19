@@ -31,6 +31,8 @@ use App\Models\Dinas;
 |
 */
 
+// testing
+
 Route::get('/', [FirstController::class, 'index'])->name('beranda');
 Route::get('/tentang', [FirstController::class, 'tentang'])->name('tentang');
 // Route::get('kontak', [FirstController::class, 'kontak'])->name('kontak');
