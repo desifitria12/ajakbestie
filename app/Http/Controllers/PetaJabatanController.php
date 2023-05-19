@@ -78,6 +78,8 @@ class PetaJabatanController extends Controller
 
             // dd($child);
 
+            // testing
+
             if(in_array($child->detailchild->kode_jabatan, $hubunganjabatanparent)) {
                 dd("test");
             }
