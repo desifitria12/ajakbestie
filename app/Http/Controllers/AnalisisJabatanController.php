@@ -102,7 +102,7 @@ class AnalisisJabatanController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request);
+        // dd($request->all());
         $validateData = $request->validate([
             'kode_jabatan' => 'required',
             'jenis_jabatan' => 'required',
@@ -150,50 +150,29 @@ class AnalisisJabatanController extends Controller
             ]);
             $detailJabatan = Jabatan::Where('id', $request->jabatanchild)->first();
             $detailParent = HubunganJabatan::Where('kode_jabatan', $request->kode_jabatanparent)->first();
+            $data = [
+                'kode_jabatan' => $request->kode_jabatanchild,
+                'jabatan_id' => $request->jabatanchild,
+                'dinas_id' => $request->dinas_idchild,
+                'tingkat' => ($request->tingkatchild + 1),
+                'jpt_madya' => $detailParent->jpt_madya,
+                'jpt_pratama' => $detailParent->jpt_pratama,
+                'administrator' => $detailParent->administrator,
+                'pengawas' => $detailParent->pengawas,
+            ];
+
             if ($request->jenis_jabatanchild == "Struktural") {
                 if ($detailParent->jpt_pratama == NULL) {
-                    HubunganJabatan::create([
-                        'kode_jabatan' => $request->kode_jabatanchild,
-                        'jabatan_id' => $request->jabatanchild,
-                        'dinas_id' => $request->dinas_idchild,
-                        'tingkat' => ($request->tingkatchild + 1),
-                        'jpt_madya' => $detailParent->jpt_madya,
-                        'jpt_pratama' => $detailJabatan->nama_unit,
-                    ]);
+                    $data['jpt_pratama'] = $detailJabatan->nama_unit;
                 } else if ($detailParent->administrator == NULL) {
-                    HubunganJabatan::create([
-                        'kode_jabatan' => $request->kode_jabatanchild,
-                        'jabatan_id' => $request->jabatanchild,
-                        'dinas_id' => $request->dinas_idchild,
-                        'tingkat' => ($request->tingkatchild + 1),
-                        'jpt_madya' => $detailParent->jpt_madya,
-                        'jpt_pratama' => $detailParent->jpt_pratama,
-                        'administrator' => $detailJabatan->nama_unit,
-                    ]);
+                    $data['administrator'] = $detailJabatan->nama_unit;
                 } else if ($detailParent->pengawas == NULL) {
-                    HubunganJabatan::create([
-                        'kode_jabatan' => $request->kode_jabatanchild,
-                        'jabatan_id' => $request->jabatanchild,
-                        'dinas_id' => $request->dinas_idchild,
-                        'tingkat' => ($request->tingkatchild + 1),
-                        'jpt_madya' => $detailParent->jpt_madya,
-                        'jpt_pratama' => $detailParent->jpt_pratama,
-                        'administrator' => $detailParent->administrator,
-                        'pengawas' => $detailJabatan->nama_unit,
-                    ]);
+                    $data['pengawas'] = $detailJabatan->nama_unit;
                 }
-            } else {
-                HubunganJabatan::create([
-                    'kode_jabatan' => $request->kode_jabatanchild,
-                    'jabatan_id' => $request->jabatanchild,
-                    'dinas_id' => $request->dinas_idchild,
-                    'tingkat' => ($request->tingkatchild + 1),
-                    'jpt_madya' => $detailParent->jpt_madya,
-                    'jpt_pratama' => $detailParent->jpt_pratama,
-                    'administrator' => $detailParent->administrator,
-                    'pengawas' => $detailParent->pengawas,
-                ]);
             }
+
+            HubunganJabatan::create($data);
+
             HubunganJabatanParent::create([
                 'parent_jabatan' => $request->kode_jabatanparent,
                 'child_jabatan' => $request->kode_jabatanchild,
