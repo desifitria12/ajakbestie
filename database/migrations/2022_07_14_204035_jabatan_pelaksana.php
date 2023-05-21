@@ -22,8 +22,8 @@ return new class extends Migration
             $table->text('pdd_jurusan');
             $table->string('pelatihan_struktural')->default("Tidak Dipersyaratkan");
             $table->string('pelatihan_fungsional')->default("Tidak Dipersyaratkan");
-            $table->text('pelatihan_teknis')->default("Tidak Dipersyaratkan");
-            $table->text('pengalaman_kerja')->default("Tidak Dipersyaratkan");
+            $table->text('pelatihan_teknis')->nullable();
+            $table->text('pengalaman_kerja')->nullable();
             $table->text('hasil_kerja_jabatan');
             $table->text('tanggung_jawab');
             $table->text('wewenang');
