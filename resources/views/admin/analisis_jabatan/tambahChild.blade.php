@@ -19,6 +19,8 @@
                 name="tingkatchild" id="tingkatchild" hidden required>
               <input type="text" class="form-control-label kode_jabatanparent" value="{{ old('kode_jabatanparent') }}"
                 name="kode_jabatanparent" id="kode_jabatanparent" hidden required>
+              <input type="text" class="form-control-label following_jabatan_id" value="{{ old('following_jabatan_id') }}"
+                name="following_jabatan_id" id="following_jabatan_id" hidden required>
               <div class="form-group{{ $errors->has('kode_jabatanchild') ? ' has-danger' : '' }}">
                 <label class="form-control-label" for="kode_jabatanchild">{{ __('Kode Jabatan') }}</label>
                 <input type="text" name="kode_jabatanchild" id="kode_jabatanchild"

@@ -88,6 +88,37 @@ class HubunganJabatan extends Model
     {
         return $this->hasOne(StandarKompetensi::class, 'jabatan_id', 'jabatan_id');
     }
+
+    public static function getHierarchy($dinasId)
+    {
+        $jabatans = self::with('datajabatan')
+                    ->where('dinas_id', $dinasId)
+                    ->get();
+        
+        // Turn the collection into an associative array where the key is jabatan_id and the value is the model itself
+        $jabatans = $jabatans->keyBy('jabatan_id');
+
+        // filter root nodes (nodes without a parent)
+        $roots = $jabatans->filter(function($item) {
+            return is_null($item['following_jabatan_id']);
+        });
+
+        // only iterate over the root nodes
+        return $roots->mapWithKeys(function($item) use ($jabatans) {
+            return [$item->datajabatan->nama_jabatan => self::getChildren($item->jabatan_id, $jabatans)];
+        })->toArray();
+    }
+
+    public static function getChildren($parentId, $jabatans)
+    {
+        $children = $jabatans->filter(function($item) use ($parentId) {
+            return $item['following_jabatan_id'] == $parentId;
+        });
+
+        return $children->mapWithKeys(function($child) use ($jabatans) {
+            return [$child->datajabatan->nama_jabatan => self::getChildren($child->jabatan_id, $jabatans)];
+        })->toArray();
+    }
     
     // public function data_child()
     // {

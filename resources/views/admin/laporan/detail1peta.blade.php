@@ -16,15 +16,29 @@
           </div>
         </div>
         
-        <div class="d-flex">
-          <div>{{ $parentJabatan['parent_jabatan'] }}</div>
-          <div class="ml-5">
-            @foreach ($parentJabatan['child_data'] as $child)
-                <div>{{ $child }}</div>
-            @endforeach
+        @if (!empty($jabatan_hierarchy))
+          <ul class="tree mx-4">
+            <li>
+              <span>{{ $namaopd }}</span>
+              <ul>
+                @foreach($jabatan_hierarchy as $nama_jabatan => $children)
+                  <li>
+                    <span>{{ $nama_jabatan }}</span>
+                    @if(count($children) > 0)
+                      <ul>
+                        @include('admin.laporan.detail1peta_child', ['children' => $children])
+                      </ul>
+                    @endif
+                  </li>
+                @endforeach
+              </ul>
+            </li>
+          </ul>
+        @else
+          <div class="alert alert-secondary mx-4" role="alert">
+            Belum ada data jabatan yang terdaftar. silahkan mengisi data jabatan terlebih dahulu pada <a href="/analisis_jabatan">menu entry data Analisis Jabatan</a>
           </div>
-        </div>
-        
+        @endif
     </div>
   </div>
 </div>

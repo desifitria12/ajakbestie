@@ -97,7 +97,7 @@
                     @if($index->datajabatan->jenis_jabatan =="Struktural")
                     <a href="#" class="btn btn-primary btn-sm tambahChildModal" data-id_opd="{{$id_opd}}"
                       data-kode_jabatan="{{ $index->kode_jabatan }}" data-tingkat="{{ $index->tingkat }}"
-                      data-nama_dinas="{{ $nama_opd }}" data-bs-toggle="modal"
+                      data-nama_dinas="{{ $nama_opd }}" data-following_jabatan_id={{ $index->jabatan_id }} data-bs-toggle="modal"
                       data-bs-target="#tambahChildModal">Tambah</a>
                     @endif
 
@@ -135,7 +135,7 @@
                     @if($index->datajabatan->jenis_jabatan =="Struktural")
                     <a href="#" class="btn btn-primary btn-sm tambahChildModal" data-id_opd="{{$id_opd}}"
                       data-kode_jabatan="{{ $index->kode_jabatan }}" data-tingkat="{{ $index->tingkat }}"
-                      data-nama_dinas="{{ $nama_opd }}" data-bs-toggle="modal"
+                      data-nama_dinas="{{ $nama_opd }}" data-following_jabatan_id={{ $index->jabatan_id }} data-bs-toggle="modal"
                       data-bs-target="#tambahChildModal">Tambah</a>
                     @endif
                   </th>
@@ -172,7 +172,7 @@
                     @if($index->datajabatan->jenis_jabatan =="Struktural")
                     <a href="#" class="btn btn-primary btn-sm tambahChildModal" data-id_opd="{{$id_opd}}"
                       data-kode_jabatan="{{ $index->kode_jabatan }}" data-tingkat="{{ $index->tingkat }}"
-                      data-nama_dinas="{{ $nama_opd }}" data-bs-toggle="modal"
+                      data-nama_dinas="{{ $nama_opd }}" data-following_jabatan_id={{ $index->jabatan_id }} data-bs-toggle="modal"
                       data-bs-target="#tambahChildModal">Tambah</a>
                     @endif
                   </th>
@@ -209,7 +209,7 @@
                     @if($index->datajabatan->jenis_jabatan =="Struktural")
                     <a href="#" class="btn btn-primary btn-sm tambahChildModal" data-id_opd="{{$id_opd}}"
                       data-kode_jabatan="{{ $index->kode_jabatan }}" data-tingkat="{{ $index->tingkat }}"
-                      data-nama_dinas="{{ $nama_opd }}" data-bs-toggle="modal"
+                      data-nama_dinas="{{ $nama_opd }}" data-following_jabatan_id={{ $index->jabatan_id }} data-bs-toggle="modal"
                       data-bs-target="#tambahChildModal">Tambah</a>
                     @endif
                   </th>
@@ -246,7 +246,7 @@
                     @if($index->datajabatan->jenis_jabatan =="Struktural")
                     <a href="#" class="btn btn-primary btn-sm tambahChildModal" data-id_opd="{{$id_opd}}"
                       data-kode_jabatan="{{ $index->kode_jabatan }}" data-tingkat="{{ $index->tingkat }}"
-                      data-nama_dinas="{{ $nama_opd }}" data-bs-toggle="modal"
+                      data-nama_dinas="{{ $nama_opd }}" data-following_jabatan_id={{ $index->jabatan_id }} data-bs-toggle="modal"
                       data-bs-target="#tambahChildModal">Tambah</a>
                     @endif
                   </th>
@@ -474,6 +474,7 @@
       var id_opd = $(this).data('id_opd')
       var nama_dinas = $(this).data('nama_dinas')
       var tingkat = $(this).data('tingkat')
+      var following_jabatan_id = $(this).data('following_jabatan_id')
       $('#dinas_idchild').val(id_opd);
       $('#tingkatchild').val(tingkat);
       $('#kode_jabatanparent').val(kode_jabatan);
@@ -481,6 +482,7 @@
       $('#jenis_jabatanchild').selectpicker('refresh');
       $('#jabatanchild').val('');
       $('#jabatanchild').selectpicker('refresh');
+      $('#following_jabatan_id').val(following_jabatan_id)
       // var tingkat = 4;
       if ((tingkat == 0)||(tingkat == 1)){
         let struktural = document.getElementById("strukturalchild").hidden = false;

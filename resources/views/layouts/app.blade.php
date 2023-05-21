@@ -27,6 +27,7 @@
     <link type="text/css" href="{{ asset('argon') }}/css/argon9f1e.css" rel="stylesheet"> --}}
     {{-- CSS SELECT 2 --}}
     <link href="{{ asset('bootstrap_select') }}/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('custom/main.css') }}">
 </head>
 
 <body class="{{ $class ?? '' }}">

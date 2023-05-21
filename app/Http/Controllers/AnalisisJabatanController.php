@@ -153,6 +153,7 @@ class AnalisisJabatanController extends Controller
             $data = [
                 'kode_jabatan' => $request->kode_jabatanchild,
                 'jabatan_id' => $request->jabatanchild,
+                'following_jabatan_id' => $request->following_jabatan_id,
                 'dinas_id' => $request->dinas_idchild,
                 'tingkat' => ($request->tingkatchild + 1),
                 'jpt_madya' => $detailParent->jpt_madya,
