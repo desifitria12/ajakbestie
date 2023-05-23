@@ -15,7 +15,7 @@ class HubunganJabatan extends Model
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
-                return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
+            return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
                 return $query->where('nama_jabatan',  'like', '%' . request('search') . '%');
             })->orwhereHas('standarkompetensi', function ($query) {
                 return $query->where('kelompok_jabatan',  'like', '%' . request('search') . '%');
@@ -59,7 +59,7 @@ class HubunganJabatan extends Model
     {
         return $this->hasMany(BiodataJabatanModel::class, 'kode_jabatan', 'kode_jabatan');
     }
-    
+
     public function data_korelasi()
     {
         return $this->hasMany(KorelasiJabatanModel::class, 'kode_jabatan', 'kode_jabatan');
@@ -88,13 +88,35 @@ class HubunganJabatan extends Model
     {
         return $this->hasOne(StandarKompetensi::class, 'jabatan_id', 'jabatan_id');
     }
-    
+
     // public function data_child()
     // {
     //     return $this->hasOne(Jabatan::class, 'id', 'jabatan_id');
     // }
 
-    public function children() {
-        return $this->hasMany(HubunganJabatanParent::class, 'parent_jabatan', 'kode_jabatan');
+    public function children()
+    {
+        return $this->hasMany(HubunganJabatanParent::class, 'parent_jabatan', 'kode_jabatan')->with('child');
+    }
+
+    public function parents()
+    {
+        return $this->hasMany(HubunganJabatanParent::class, 'child_jabatan', 'kode_jabatan')->with('parent');
+    }
+
+    public function getTreeAttribute()
+    {
+        $children = $this->children->map(function ($childJabatanParent) {
+            return $childJabatanParent->child;
+        });
+
+        $tree = [];
+        foreach ($children as $childJabatan) {
+            if ($childJabatan->datajabatan !== null) {
+                $tree[$childJabatan->datajabatan->nama_jabatan] = $childJabatan->getTreeAttribute();
+            }
+        }
+
+        return $tree;
     }
 }
