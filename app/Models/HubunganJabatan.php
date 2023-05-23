@@ -15,7 +15,7 @@ class HubunganJabatan extends Model
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
-            return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
+                return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
                 return $query->where('nama_jabatan',  'like', '%' . request('search') . '%');
             })->orwhereHas('standarkompetensi', function ($query) {
                 return $query->where('kelompok_jabatan',  'like', '%' . request('search') . '%');
@@ -93,4 +93,8 @@ class HubunganJabatan extends Model
     // {
     //     return $this->hasOne(Jabatan::class, 'id', 'jabatan_id');
     // }
+
+    public function children() {
+        return $this->hasMany(HubunganJabatanParent::class, 'parent_jabatan', 'kode_jabatan');
+    }
 }

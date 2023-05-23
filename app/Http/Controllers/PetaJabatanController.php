@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\HubunganJabatan;
-use App\Models\HubunganJabatanParent;
 use Illuminate\Http\Request;
 use App\Models\Dinas;
 use App\Models\HakAksesModel;
@@ -24,82 +23,45 @@ class PetaJabatanController extends Controller
         ];
         return view('admin.laporan.indexpeta', $data);
     }
-    public function detail($dinas)
+    public function detail($dinas_id)
     {
         if (auth()->user()->role == 'user') {
             $dinas_id = HakAksesModel::with('dinas')->where('user_id', auth()->user()->id)->first();
-            if ($dinas_id->dinas_id != $dinas) {
+            if ($dinas_id->dinas_id != $dinas_id) {
                 return redirect('/peta-jabatan')->with('Errors', 'Anda tidak mempunyai akses!');
             }
         }
-        $namaopd = Dinas::where('id', $dinas)->first()->nama_dinas;
+        $namaopd = Dinas::where('id', $dinas_id)->first()->nama_dinas;
+
+        $jabatans = HubunganJabatan::with('children')->where('dinas_id', $dinas_id)->get();
+
+        $output = [];
+
+        foreach ($jabatans as $jabatan) {
+            if (count($jabatan->children) > 0) {
+                $output[$jabatan->kode_jabatan] = array_map(function($child) {
+                    return $child['child_jabatan'];
+                }, $jabatan->children->toArray());
+            } else {
+                $output[$jabatan->kode_jabatan] = [];
+            }
+        }
+
+        dd($output);
+
         // dd($dinas);
-        $values = [];
-        if ($dinas == 1) {
-            $tingkatawal = 0;
-        } else {
-            $tingkatawal = 1;
-        };
+        // $values = [];
+        // if ($dinas == 1) {
+        //     $tingkatawal = 0;
+        // } else {
+        //     $tingkatawal = 1;
+        // };
         // $hubunganjabatan = hubunganjabatan($dinas, $tingkatawal);
-
-        $hubunganjabatan = HubunganJabatan::with('data_parent.detailchild.datajabatan', 'datajabatan')->where([
-            ['dinas_id', $dinas],        
-        ])->first();
-
-
-        // dd($hubunganjabatan);
+        // // dd($hubunganjabatan);
         // if ($hubunganjabatan->first() == NULL) {
         //     array_push($values, ['id' => 1, 'tags' => ['Struktural'], 'name' => "TIDAK ADA DATA"]);
         // }
-
-        if (!$hubunganjabatan) {
-            array_push($values, ['id' => 1, 'tags' => ['Struktural'], 'name' => "TIDAK ADA DATA"]);
-        }
-
-        // dd($hubunganjabatan->data_parent[0]->detailchild->datajabatan->nama_jabatan);
-
-        $parentJabatan = [];
-
-        $hubunganjabatanparent= HubunganJabatanParent::pluck('parent_jabatan')->toArray();
-
-        foreach ($hubunganjabatan->data_parent as $child) {
-            $parent_jabatan = $hubunganjabatan->datajabatan->nama_jabatan;
-            $nama_jabatan = $child->detailchild->datajabatan->nama_jabatan;
-            
-            // Check if the parent_jabatan already exists in the $parentJabatan array
-            if (!isset($parentJabatan['parent_jabatan'])) {
-                // Create an array with the parent_jabatan and initialize child_data with the first nama_jabatan
-                $parentJabatan['parent_jabatan'] = $parent_jabatan;
-                $parentJabatan['child_data'] = [$nama_jabatan];
-            } else {
-                // If the parent_jabatan already exists, append the current nama_jabatan to the child_data array
-                $parentJabatan['child_data'][] = $nama_jabatan;
-            }
-
-            // dd($child);
-
-            // testing
-
-            if(in_array($child->detailchild->kode_jabatan, $hubunganjabatanparent)) {
-                dd("test");
-            }
-            // if ($child->detail) {
-            //     # code...
-            // }
-        }
-        
-
-        // View the contents of the $parentJabatan array
-        // dd($parentJabatan);
-        
-
-        // dd($childs);
-
-        // hubungan_jabatan_parent (parent_jabatan / child_jabatan) -> (kode_jabatan) hubungan_jabatan (jabatan_id) -> (id) jabatan (nama_jabatan)
-        // expected data
-        // $child = [01 - 01.01, 01 - 01.02, 01 - 01.03]    
-
-        // array_push($values, ['id' => $index->kode_jabatan, 'name' => $index->datajabatan->jenis_jabatan, 'name' => $index->datajabatan->nama_jabatan]);
+        // // array_push($values, ['id' => $index->kode_jabatan, 'name' => $index->datajabatan->jenis_jabatan, 'name' => $index->datajabatan->nama_jabatan]);
         // if ($hubunganjabatan->first() != NULL) {
         //     // dd($hubunganjabatan);
         //     foreach ($hubunganjabatan as $index) {
@@ -147,12 +109,10 @@ class PetaJabatanController extends Controller
 
         // dd($values);
         // dd(json_encode($values));
-        // dd($parentJabatan);
         $data = [
             'namaopd' =>  $namaopd,
-            'jabatan' => json_encode($values),
+            // 'jabatan' => json_encode($values),
             'active' => 'peta',
-            'parentJabatan' => $parentJabatan
         ];
 
         return view('admin.laporan.detail1peta', $data);

@@ -16,14 +16,14 @@
           </div>
         </div>
         
-        <div class="d-flex">
+        {{-- <div class="d-flex">
           <div>{{ $parentJabatan['parent_jabatan'] }}</div>
           <div class="ml-5">
             @foreach ($parentJabatan['child_data'] as $child)
                 <div>{{ $child }}</div>
             @endforeach
           </div>
-        </div>
+        </div> --}}
         
     </div>
   </div>

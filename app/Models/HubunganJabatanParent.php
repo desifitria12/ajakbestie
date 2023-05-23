@@ -16,4 +16,8 @@ class HubunganJabatanParent extends Model
     {
         return $this->belongsTo(HubunganJabatan::class, 'child_jabatan', 'kode_jabatan');
     }
+
+    public function parent() {
+        return $this->belongsTo(HubunganJabatan::class, 'parent_jabatan', 'kode_jabatan');
+    }
 }
