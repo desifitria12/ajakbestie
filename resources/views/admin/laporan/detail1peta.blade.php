@@ -92,8 +92,6 @@
   </div>
 </div>
 
->>>>>>> parent of 5013c06 (feat: implementing multilevel-diagram using hubungan_jabatan_parent table)
-
 @include('layouts.footers.auth')
 
 @endsection

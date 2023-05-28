@@ -16,7 +16,6 @@ class HubunganJabatan extends Model
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
                 return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
-                return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
                 return $query->where('nama_jabatan',  'like', '%' . request('search') . '%');
             })->orwhereHas('standarkompetensi', function ($query) {
                 return $query->where('kelompok_jabatan',  'like', '%' . request('search') . '%');
@@ -97,7 +96,6 @@ class HubunganJabatan extends Model
     //     return $this->hasOne(Jabatan::class, 'id', 'jabatan_id');
     // }
 
-<<<<<<< HEAD
     public function children()
     {
         return $this->hasMany(HubunganJabatanParent::class, 'parent_jabatan', 'kode_jabatan')->with('child');
@@ -124,10 +122,6 @@ class HubunganJabatan extends Model
         }
 
         return $tree;
-=======
-    public function children() {
-        return $this->hasMany(HubunganJabatanParent::class, 'parent_jabatan', 'kode_jabatan');
->>>>>>> parent of 5013c06 (feat: implementing multilevel-diagram using hubungan_jabatan_parent table)
     }
     
 }
