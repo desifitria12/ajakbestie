@@ -59,8 +59,8 @@ class HubunganJabatan extends Model
     {
         return $this->hasMany(BiodataJabatanModel::class, 'kode_jabatan', 'kode_jabatan');
     }
-    
-    
+
+
     public function data_korelasi()
     {
         return $this->hasMany(KorelasiJabatanModel::class, 'kode_jabatan', 'kode_jabatan');
@@ -89,8 +89,8 @@ class HubunganJabatan extends Model
     {
         return $this->hasOne(StandarKompetensi::class, 'jabatan_id', 'jabatan_id');
     }
-    
-    
+
+
     // public function data_child()
     // {
     //     return $this->hasOne(Jabatan::class, 'id', 'jabatan_id');
@@ -113,15 +113,37 @@ class HubunganJabatan extends Model
         });
 
         $tree = [];
-        
+
         foreach ($children as $childJabatan) {
             if ($childJabatan->datajabatan !== null) {
-                $tree[$childJabatan->datajabatan->nama_jabatan] = $childJabatan->getTreeAttribute();
-                
+                $tree[$childJabatan->datajabatan->nama_jabatan] = [
+                    'tree' => $childJabatan->getTreeAttribute(),
+                    'pegawai' => $childJabatan->pegawai,  // assuming pegawai attribute is available
+                    'tp_total' => round($childJabatan->tp_total, 0, PHP_ROUND_HALF_EVEN),
+                    'peg_total_diff' => round($childJabatan->pegawai - $childJabatan->tp_total, 0, PHP_ROUND_HALF_EVEN)
+                ];
             }
         }
 
         return $tree;
     }
-    
+
+
+    public function getTotalAttribute()
+    {
+        return $this->data_faktor->sum('data_faktor.nilai');
+    }
+
+    public function getTpTotalAttribute()
+    {
+        return $this->data_beban_kerja->sum(function ($beban) {
+            return ($beban->penyelesaian / 1250) * $beban->jumlah_hasil;
+        });
+    }
+
+    public function getKelompokJabatanAttribute()
+    {
+        return str_replace("Jabatan ", '', $this->standarkompetensi->kelompok_jabatan ?? '');
+    }
+
 }
