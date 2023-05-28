@@ -95,7 +95,6 @@
                   <th class="text-center">{{ $index->pegawai }}</th>
                   <th class="text-center">{{ round($tp_total, 0, PHP_ROUND_HALF_EVEN) }}</th>
                   <th class="text-center">{{ round($index->pegawai - $tp_total, 0, PHP_ROUND_HALF_EVEN) }}</th>
-                  
                 </tr>
                 @endforeach
               </tbody>

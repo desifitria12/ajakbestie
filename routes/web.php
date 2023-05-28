@@ -124,11 +124,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/laporan-informasi-jabatan', [LaporanController::class, 'indexinformasijabatan']);
     Route::get('/laporan-faktor-jabatan', [LaporanController::class, 'indexfaktorjabatan']);
     Route::get('/laporan-kompetensi-jabatan', [LaporanController::class, 'indexkompetensijabatan']);
-    Route::get('/peta-jabatan', [PetaJabatanController::class, 'index']);
-    Route::get('/detail_peta/{id}', [PetaJabatanController::class, 'detail']);
     Route::get('/laporan-rekap', [LaporanController::class, 'indexrekapabk']);
     Route::get('/cetak-laporan-rekap', [LaporanController::class, 'rekapitulasi']);
     Route::get('/laporan-biodata', [LaporanController::class, 'indexrekapbiodatajabatan']);
     Route::get('/detail_rekap_biodata/{id}', [LaporanController::class, 'detailrekapbiodata']);
     Route::get('/cetak-laporan-biodata', [LaporanController::class, 'biodata']);
+    Route::get('/peta-jabatan', [PetaJabatanController::class, 'index']);
+    Route::get('/detail_peta/{id}', [PetaJabatanController::class, 'detail']);
+    Route::get('/cetak-peta', [PetaJabatanController::class, 'peta']);
 });

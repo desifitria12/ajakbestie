@@ -111,12 +111,15 @@ class HubunganJabatan extends Model
         });
 
         $tree = [];
+        
         foreach ($children as $childJabatan) {
             if ($childJabatan->datajabatan !== null) {
                 $tree[$childJabatan->datajabatan->nama_jabatan] = $childJabatan->getTreeAttribute();
+                
             }
         }
 
         return $tree;
     }
+    
 }

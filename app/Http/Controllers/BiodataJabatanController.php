@@ -57,14 +57,12 @@ class BiodataJabatanController extends Controller
                 $dinas_id = HakAksesModel::with('dinas')->where('user_id', auth()->user()->id)->first();
                 $opd = Dinas::filter(request(['search']))->where('id', $dinas_id->dinas_id)->paginate(10)->withQueryString();
             } else {
-                
                 $opd = Dinas::filter(request(['search']))->orderBy('id', 'ASC')->paginate(10)->withQueryString();
             }
             $data = [
                 'opd' =>  $opd,
                 'jabatan' => $jabatan,
                 'active' => 'biodatajabatan',
-              
             ];
             return redirect()->back()->with('Message', 'Data Beban Kerja Jabatan '.$jabatan->datajabatan->nama_jabatan.' Kosong, Silahkan isi Data Beban Kerja Terlebih Dahulu!');
         } else {

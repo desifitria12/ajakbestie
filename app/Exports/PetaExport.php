@@ -25,7 +25,7 @@ use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Borders;
 
 
-class RekapBiodataExport implements FromView, ShouldAutoSize, WithStyles, WithDefaultStyles
+class PetaExport implements FromView, ShouldAutoSize, WithStyles, WithDefaultStyles
 {
     public function styles(Worksheet $sheet)
     {
@@ -58,27 +58,29 @@ class RekapBiodataExport implements FromView, ShouldAutoSize, WithStyles, WithDe
         ];
     }
 
+    
     public function view(): View
-{
-    $jabatan = hubunganjabatan::with('datajabatan', 'data_korelasi', 'data_biodata', 'data_kompetensi.data_kompetensi', 'standarkompetensi')
-        ->filter(request(['search']))
-        ->paginate(20)
-        ->withQueryString();
-    
-    $biodata = BiodataJabatanModel::get();
-    
-  
-    
-    return view('admin.laporan.excel1', [
-        
-        'jabatan' => $jabatan,
-        
-        'biodata' => $biodata,
-        'active' => 'laporan',
-    ]);
-}
+    {
+       
 
+        // Fetch all root nodes (i.e., jabatan without a parent in the specified dinas)
+        $rootJabatans = HubunganJabatan::whereDoesntHave('parents')
+            
+            ->get();
 
+        $jabatan_hierarchy = [];
+        foreach ($rootJabatans as $rootJabatan) {
+            $jabatan_hierarchy[$rootJabatan->datajabatan->nama_jabatan] = $rootJabatan->tree;
+        }
+
+        
+        return view('admin.laporan.excelpeta', [        
+         
+           
+            'jabatan_hierarchy' => $jabatan_hierarchy,
+            'active' => 'peta',  
+        ]);
+    }
     
 }
 

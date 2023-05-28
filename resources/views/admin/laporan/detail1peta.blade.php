@@ -6,15 +6,47 @@
 <div class="container-fluid mt--7">
   <div class="row justify-content-center">
     <div class="col-xl-12 order-xl-1 mb-3">
-
+      
       <div class="card shadow mb-3">
         <div class="card-header bg-white border-0">
-          <div class="row align-items-center">
-            <div class="mx-auto mt-4">
-              <h3 class="text-center">{{('Peta Jabatan '. $namaopd) }}</h3>
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col-md-6 offset-md-3 text-center">
+                <h3>{{('Peta Jabatan '. $namaopd) }}</h3>
+              </div>
+              <div class="col-md-3 text-right">
+                <a href="/cetak-peta" class="btn btn-md btn-default p-2"><i class="fa fa-file-pdf"></i> Download</a>
+              </div>
             </div>
           </div>
         </div>
+        <style>
+          .table-container {
+            max-width: 500px; /* Atur lebar maksimum kontainer tabel */
+            margin: 0 auto; /* Pusatkan kontainer tabel secara horizontal */
+          }
+        </style>
+        
+        <div class="card-body">
+          <div class="card-header bg-white border-0">
+            <div class="container">
+                <div class="table-responsive">
+                  <div class="table-container">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th class="resizeable">Nama Jabatan</th>
+                          <th class="resizeable">Bazeting</th>
+                          <th class="resizeable">Formasi/ABK</th>
+                          <th class="resizeable">Ket. +/-</th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
         @if (!empty($jabatan_hierarchy))
 
@@ -36,11 +68,7 @@
             href="/analisis_jabatan">menu entry data Analisis Jabatan</a>
         </div>
         @endif
-
       </div>
-    </div>
-  </div>
-
 
   @include('layouts.footers.auth')
 

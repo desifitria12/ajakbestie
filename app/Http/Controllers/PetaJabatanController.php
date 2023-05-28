@@ -6,6 +6,8 @@ use App\Models\HubunganJabatan;
 use Illuminate\Http\Request;
 use App\Models\Dinas;
 use App\Models\HakAksesModel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PetaExport;
 
 class PetaJabatanController extends Controller
 {
@@ -50,5 +52,12 @@ class PetaJabatanController extends Controller
         ];
 
         return view('admin.laporan.detail1peta', $data);
+    }
+
+
+    public function peta()
+    {
+        return Excel::download(new PetaExport, 'Peta Jabatan.xlsx');
+        
     }
 }

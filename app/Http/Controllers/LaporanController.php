@@ -504,7 +504,7 @@ class LaporanController extends Controller
         }
         $data = [
             'opd' =>  $opd,
-            'active' => 'laporan',
+            'active' => 'laporan', 
         ];
         return view('admin.laporan.indexkompetensi', $data);
     }
@@ -527,67 +527,30 @@ class LaporanController extends Controller
 
     
 
-    public function detailrekapbiodata(Request $request, $dinas_id)
+    public function detailrekapbiodata($dinas)
     {
-        if (auth()->user()->role == 'user') {
-            $jabatan = HubunganJabatan::with('datajabatan',  'data_korelasi' ,'data_biodata', 'data_kompetensi.data_kompetensi', 'standarkompetensi')
+        $jabatan = hubunganjabatan::with('datajabatan', 'data_korelasi' ,'data_biodata' , 'data_kompetensi.data_kompetensi', 'standarkompetensi')
                 ->filter(request(['search']))
                 ->paginate(20)
                 ->withQueryString();
-                $biodata = BiodataJabatanModel::get();
-            } else {
-            $jabatan = hubunganjabatan::with('datajabatan', 'data_korelasi' ,'data_biodata' , 'data_kompetensi.data_kompetensi', 'standarkompetensi')
-                ->filter(request(['search']))
-                ->paginate(20)
-                ->withQueryString();
-                $biodata = BiodataJabatanModel::get();
-            }
-        $namaopd = Dinas::where('id', $dinas_id)->first()->nama_dinas;
-        
+        $biodata = BiodataJabatanModel::get();
+            
+        $namaopd = Dinas::where('id', $dinas)->first()->nama_dinas;
+      
         return view('admin.laporan.detailrekapbiodata', [        
+            'dinas_id' => $dinas,
             'jabatan' => $jabatan, 
             'namaopd' =>  $namaopd, 
             'biodata' => $biodata,
-
             'active' => 'laporan',    
         ]);
     }
-
-  
-
-    public function detailrekapbiodata1(Request $request, $dinas_id)
-    {
-        if (auth()->user()->role == 'user') {
-            $user = HakAksesModel::where('user_id', auth()->user()->id)->first();
-            
-            $jabatan = HubunganJabatan::with('datajabatan', 'detaildinas', 'data_biodata', 'data_kompetensi.data_kompetensi', 'standarkompetensi')
-                ->filter(request(['search']))
-                ->where('dinas_id', $user->$dinas_id)
-                ->paginate(20)
-                ->withQueryString();
-        } else {
-            $jabatan = HubunganJabatan::with('datajabatan', 'data_korelasi' ,'detaildinas', 'data_biodata', 'data_kompetensi.data_kompetensi', 'standarkompetensi')
-                ->filter(request(['search']))
-                ->where('dinas_id', $dinas_id)
-                ->paginate(20)
-                ->withQueryString();
-        }
-        $namaopd = Dinas::where('id', $dinas_id)->first()->nama_dinas;
     
-        return view('admin.laporan.detailrekapbiodata', [        
-            'jabatan' => $jabatan, 
-            'namaopd' =>  $namaopd,       
-            'active' => 'laporan',    
-        ]);
-    }
     
     public function biodata()
     {
-        if (auth()->user()->role == 'user') {
-            $user = HakAksesModel::with('dinas')->where('user_id', auth()->user()->id)->first();
-            return Excel::download(new RekapBiodataExport, 'Rekap Biodata Jabatan [' . $user->dinas->nama_dinas . '].xlsx');
-        } else {
-            return Excel::download(new RekapBiodataExport, 'Rekap Biodata Jabatan.xlsx');
-        }
+        return Excel::download(new RekapBiodataExport, 'Rekap Biodata Jabatan.xlsx');
+        
     }
+    
 }

@@ -83,12 +83,12 @@
 
                
                 {{-- {{ dd($tp_total) }} --}}
-                @if($databio->kode_jabatan == $index->kode_jabatan)
+                @if(($databio->kode_jabatan == $index->kode_jabatan) && ($index->dinas_id == $dinas_id))
                 <tr>
                   <th>{{ $index->kode_jabatan }}</th>
                   <th>{{ $index->datajabatan->nama_jabatan }}</th>
                   <th>{{ $index->datajabatan->nama_unit }}</th>
-                
+                  
                   <th class="text-center">{{ kelasjabatan2($total) }}</th>
                   
                   <th class="text-center">{{  $databio->nama}}</th>
