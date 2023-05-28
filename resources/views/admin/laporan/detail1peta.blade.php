@@ -6,10 +6,9 @@
 <div class="container-fluid mt--7">
   <div class="row justify-content-center">
     <div class="col-xl-12 order-xl-1 mb-3">
-<<<<<<< HEAD
       
       <div class="card shadow mb-3">
-        <div class="card-header bg-white border-0">
+        <div class="card-header bg-white border-0"> 
           <div class="container">
             <div class="row align-items-center">
               <div class="col-md-6 offset-md-3 text-center">
@@ -70,7 +69,6 @@
         </div>
         @endif
       </div>
-=======
      
       <div class="card shadow mb-3">
         <div class="card-header bg-white border-0"> 

@@ -16,6 +16,7 @@ class HubunganJabatan extends Model
     {
         $query->when($filters['search'] ?? false, function ($query, $search) {
                 return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
+                return $query->where('kode_jabatan', 'like', '%' . request('search') . '%')->orwhereHas('datajabatan', function ($query) {
                 return $query->where('nama_jabatan',  'like', '%' . request('search') . '%');
             })->orwhereHas('standarkompetensi', function ($query) {
                 return $query->where('kelompok_jabatan',  'like', '%' . request('search') . '%');
@@ -60,6 +61,7 @@ class HubunganJabatan extends Model
         return $this->hasMany(BiodataJabatanModel::class, 'kode_jabatan', 'kode_jabatan');
     }
     
+    
     public function data_korelasi()
     {
         return $this->hasMany(KorelasiJabatanModel::class, 'kode_jabatan', 'kode_jabatan');
@@ -88,6 +90,7 @@ class HubunganJabatan extends Model
     {
         return $this->hasOne(StandarKompetensi::class, 'jabatan_id', 'jabatan_id');
     }
+    
     
     // public function data_child()
     // {
