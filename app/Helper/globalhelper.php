@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\BiodataJabatanModel;
 use App\Models\HakAksesModel;
 use App\Models\Kompetensi;
 use App\Models\Dinas;
@@ -8,6 +9,7 @@ use App\Models\FaktorJabatan;
 use App\Models\HubunganJabatan;
 use App\Models\Jabatan;
 use App\Models\Manajerial;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 if (!function_exists('cariaksesdinas')) {
@@ -465,3 +467,36 @@ if (!function_exists('minat')) {
         return $data;
     }
 };
+
+function biodataByJabatan($dinas_id)
+{
+    $jabatan = hubunganjabatan::with('datajabatan', 'data_korelasi' ,'data_biodata' , 'data_kompetensi.data_kompetensi', 'standarkompetensi')
+                    ->filter(request(['search']))
+                    ->get();
+    $biodata = BiodataJabatanModel::get();
+
+    $biodataByJabatan = collect();
+
+    foreach($jabatan as $jabatanEntity) {
+        foreach($biodata as $databio) {
+            if ($databio->kode_jabatan == $jabatanEntity->kode_jabatan && $jabatanEntity->dinas_id == $dinas_id) {
+                $biodataByJabatan->push([
+                    'jabatan' => $jabatanEntity,
+                    'biodata' => $databio,
+                    'total' => $jabatanEntity->total_nilai,
+                ]);
+            }
+        }
+    }
+
+    // Get the current page from the url if it's not set default to 1
+    $page = LengthAwarePaginator::resolveCurrentPage() ?: 1;
+
+    // Create a new LengthAwarePaginator instance
+    $items = $biodataByJabatan->forPage($page, 10); // Change 10 to the number of items you want per page
+    $paginatedBiodataByJabatan = new LengthAwarePaginator($items, $biodataByJabatan->count(), 20, $page, [
+        'path' => LengthAwarePaginator::resolveCurrentPath(),
+    ]);
+
+    return $paginatedBiodataByJabatan;
+}

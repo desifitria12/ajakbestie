@@ -14,9 +14,11 @@
               <div class="col-md-6 offset-md-3 text-center">
                 <h3>{{('Peta Jabatan '. $namaopd) }}</h3>
               </div>
+              @if (!empty($jabatan_hierarchy))
               <div class="col-md-3 text-right">
-                <a href="/cetak-peta" class="btn btn-md btn-default p-2"><i class="fa fa-file-pdf"></i> Download</a>
+                <a href="/cetak-peta/{{ $dinas_id }}" class="btn btn-md btn-default p-2"><i class="fa fa-file-pdf"></i> Download</a>
               </div>
+              @endif
             </div>
           </div>
         </div>
@@ -26,42 +28,26 @@
             margin: 0 auto; /* Pusatkan kontainer tabel secara horizontal */
           }
         </style>
-        
-        <div class="card-body">
-          <div class="card-header bg-white border-0">
-            <div class="container">
-                <div class="table-responsive">
-                  <div class="table-container">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th class="resizeable">Nama Jabatan</th>
-                          <th class="resizeable">Bazeting</th>
-                          <th class="resizeable">Formasi/ABK</th>
-                          <th class="resizeable">Ket. +/-</th>
-                        </tr>
-                      </thead>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
         @if (!empty($jabatan_hierarchy))
 
-        <ul class="tree">
-          @foreach($jabatan_hierarchy as $nama_jabatan => $children)
+        <ul class="tree mx-5">
+          @foreach($jabatan_hierarchy as $nama_jabatan => $data)
           <li>
-            <span>{{ $nama_jabatan }}</span>
-            @if(count($children) > 0)
-            <ul>
-              @include('admin.laporan.detail1peta_child', ['children' => $children])
-            </ul>
-            @endif
+              <span>{{ $nama_jabatan }}</span>
+              <div class="extra-data">
+                  <span>{{ $data['pegawai'] }}</span>
+                  <span>{{ $data['tp_total'] }}</span>
+                  <span>{{ $data['peg_total_diff'] }}</span>
+              </div>
+              @if(count($data['tree']) > 0)
+              <ul>
+                  @include('admin.laporan.detail1peta_child', ['children' => $data['tree']])
+              </ul>
+              @endif
           </li>
           @endforeach
-        </ul>
+      </ul>      
         @else
         <div class="alert alert-secondary mx-4" role="alert">
           Belum ada data jabatan yang terdaftar. silahkan mengisi data jabatan terlebih dahulu pada <a

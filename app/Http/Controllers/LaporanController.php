@@ -11,7 +11,7 @@ use App\Models\Jabatan;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RekapBiodataExport;
-
+use Illuminate\Pagination\LengthAwarePaginator;
 
 // use vendor\phpoffice\phpword;
 class LaporanController extends Controller
@@ -525,32 +525,20 @@ class LaporanController extends Controller
         return view('admin.laporan.indexbiodata', $data);
     }
 
-    
+    public function detailrekapbiodata($dinas_id)
+    {       
+        $namaopd = Dinas::where('id', $dinas_id)->first()->nama_dinas;
 
-    public function detailrekapbiodata($dinas)
-    {
-        $jabatan = hubunganjabatan::with('datajabatan', 'data_korelasi' ,'data_biodata' , 'data_kompetensi.data_kompetensi', 'standarkompetensi')
-                ->filter(request(['search']))
-                ->paginate(20)
-                ->withQueryString();
-        $biodata = BiodataJabatanModel::get();
-            
-        $namaopd = Dinas::where('id', $dinas)->first()->nama_dinas;
-      
-        return view('admin.laporan.detailrekapbiodata', [        
-            'dinas_id' => $dinas,
-            'jabatan' => $jabatan, 
-            'namaopd' =>  $namaopd, 
-            'biodata' => $biodata,
-            'active' => 'laporan',    
+        return view('admin.laporan.detailrekapbiodata', [
+            'dinas_id' => $dinas_id,
+            'namaopd' => $namaopd,
+            'active' => 'laporan',
         ]);
     }
     
-    
-    public function biodata()
+    public function biodata($dinas_id)
     {
-        return Excel::download(new RekapBiodataExport, 'Rekap Biodata Jabatan.xlsx');
-        
+        return Excel::download(new RekapBiodataExport($dinas_id), 'Rekap Biodata Jabatan.xlsx');
     }
     
 }

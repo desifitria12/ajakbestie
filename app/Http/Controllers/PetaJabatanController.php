@@ -8,6 +8,8 @@ use App\Models\Dinas;
 use App\Models\HakAksesModel;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PetaExport;
+use Spatie\Browsershot\Browsershot;
+
 
 class PetaJabatanController extends Controller
 {
@@ -33,97 +35,56 @@ class PetaJabatanController extends Controller
                 return redirect('/peta-jabatan')->with('Errors', 'Anda tidak mempunyai akses!');
             }
         }
-        $namaopd = Dinas::where('id', $dinas_id)->first()->nama_dinas;
 
-        $jabatans = HubunganJabatan::with('children')->where('dinas_id', $dinas_id)->get();
-
-        $output = [];
-
-        foreach ($jabatans as $jabatan) {
-            if (count($jabatan->children) > 0) {
-                $output[$jabatan->kode_jabatan] = array_map(function($child) {
-                    return $child['child_jabatan'];
-                }, $jabatan->children->toArray());
-            } else {
-                $output[$jabatan->kode_jabatan] = [];
-            }
-        }
-
-        dd($output);
-
-        // dd($dinas);
-        // $values = [];
-        // if ($dinas == 1) {
-        //     $tingkatawal = 0;
-        // } else {
-        //     $tingkatawal = 1;
-        // };
-        // $hubunganjabatan = hubunganjabatan($dinas, $tingkatawal);
-        // // dd($hubunganjabatan);
-        // if ($hubunganjabatan->first() == NULL) {
-        //     array_push($values, ['id' => 1, 'tags' => ['Struktural'], 'name' => "TIDAK ADA DATA"]);
-        // }
-        // // array_push($values, ['id' => $index->kode_jabatan, 'name' => $index->datajabatan->jenis_jabatan, 'name' => $index->datajabatan->nama_jabatan]);
-        // if ($hubunganjabatan->first() != NULL) {
-        //     // dd($hubunganjabatan);
-        //     foreach ($hubunganjabatan as $index) {
-        //         array_push($values, ['id' => $index->kode_jabatan, 'tags' => [$index->datajabatan->jenis_jabatan], 'name' => $index->datajabatan->nama_jabatan]);
-
-        //         $parent = $index->kode_jabatan;
-        //         if ($index->data_parent != NULL) {
-        //             foreach ($index->data_parent as $index) {
-        //                 $lvl2 = childjabatan($index->child_jabatan);
-        //                 foreach ($lvl2 as $index) {
-        //                     array_push($values, ['id' => $index->kode_jabatan, 'pid' => $parent, 'tags' => [$index->datajabatan->jenis_jabatan], 'name' => $index->datajabatan->nama_jabatan]);
-        //                     $parent2 = $index->kode_jabatan;
-        //                     if ($index->data_parent != NULL) {
-        //                         foreach ($index->data_parent as $index) {
-        //                             $lvl3 = childjabatan($index->child_jabatan);
-        //                             foreach ($lvl3 as $index) {
-        //                                 array_push($values, ['id' => $index->kode_jabatan, 'pid' => $parent2, 'tags' => [$index->datajabatan->jenis_jabatan], 'name' => $index->datajabatan->nama_jabatan]);
-        //                                 $parent3 = $index->kode_jabatan;
-        //                                 if ($index->data_parent != NULL) {
-        //                                     foreach ($index->data_parent as $index) {
-        //                                         $lvl4 = childjabatan($index->child_jabatan);
-        //                                         foreach ($lvl4 as $index) {
-        //                                             array_push($values, ['id' => $index->kode_jabatan, 'pid' => $parent3, 'tags' => [$index->datajabatan->jenis_jabatan], 'name' => $index->datajabatan->nama_jabatan]);
-        //                                             $parent4 = $index->kode_jabatan;
-        //                                             if ($index->data_parent != NULL) {
-        //                                                 foreach ($index->data_parent as $index) {
-        //                                                     $lvl5 = childjabatan($index->child_jabatan);
-        //                                                     foreach ($lvl5 as $index) {
-        //                                                         array_push($values, ['id' => $index->kode_jabatan, 'pid' => $parent4, 'tags' => [$index->datajabatan->jenis_jabatan], 'name' => $index->datajabatan->nama_jabatan]);
-        //                                                         $parent5 = $index->kode_jabatan;
-        //                                                     }
-        //                                                 }
-        //                                             }
-        //                                         }
-        //                                     }
-        //                                 }
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // dd($values);
-        // dd(json_encode($values));
-        $data = [
-            'namaopd' =>  $namaopd,
-            // 'jabatan' => json_encode($values),
-            'active' => 'peta',
-        ];
+        $data = $this->generateData($dinas_id);
 
         return view('admin.laporan.detail1peta', $data);
     }
 
-
-    public function peta()
+    public function peta($dinas_id)
     {
-        return Excel::download(new PetaExport, 'Peta Jabatan.xlsx');
-        
+        if (auth()->user()->role == 'user') {
+            $dinas_id = HakAksesModel::with('dinas')->where('user_id', auth()->user()->id)->first();
+            if ($dinas_id->dinas_id != $dinas_id) {
+                return redirect('/peta-jabatan')->with('Errors', 'Anda tidak mempunyai akses!');
+            }
+        }
+
+        $data = $this->generateData($dinas_id);
+
+        // $pdf = PDF::loadView('pdf.detailpeta', $data);
+        $view = view('pdf.detailpeta', $data)->render();
+        $pdf = Browsershot::html($view)->pdf();
+        return response($pdf)->header('Content-Type', 'application/pdf');
+
+        // return $pdf->stream('document.pdf');
+
+        // return view('pdf.detailpeta', $data);
+    }
+
+    public function generateData($dinas_id)
+    {
+        $namaopd = Dinas::where('id', $dinas_id)->first()->nama_dinas;
+
+        $rootJabatans = HubunganJabatan::whereDoesntHave('parents')
+            ->where('dinas_id', $dinas_id)
+            ->get();
+
+        $jabatan_hierarchy = [];
+        foreach ($rootJabatans as $rootJabatan) {
+            $jabatan_hierarchy[$rootJabatan->datajabatan->nama_jabatan] = [
+                'tree' => $rootJabatan->getTreeAttribute(),
+                'pegawai' => $rootJabatan->pegawai,
+                'tp_total' => round($rootJabatan->tp_total, 0, PHP_ROUND_HALF_EVEN),
+                'peg_total_diff' => round($rootJabatan->pegawai - $rootJabatan->tp_total, 0, PHP_ROUND_HALF_EVEN)
+            ];
+        }
+
+        return [
+            'dinas_id' => $dinas_id,
+            'namaopd' =>  $namaopd,
+            'jabatan_hierarchy' => $jabatan_hierarchy,
+            'active' => 'peta',
+        ];
     }
 }

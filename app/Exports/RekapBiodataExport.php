@@ -27,58 +27,42 @@ use PhpOffice\PhpSpreadsheet\Style\Borders;
 
 class RekapBiodataExport implements FromView, ShouldAutoSize, WithStyles, WithDefaultStyles
 {
+    protected $dinas_id;
+
+    public function __construct($dinas_id)
+    {
+        $this->dinas_id = $dinas_id;
+    }
+
     public function styles(Worksheet $sheet)
     {
         return [
             // Style the first row as bold text.
             '1'    => [
                 'font' => [
-
                     'alignment' => Alignment::HORIZONTAL_CENTER,
                     'size' => 14
-
                 ]
             ],
-
         ];
     }
 
     public function defaultStyles(Style $defaultStyle)
     {
-        // Configure the default styles
-        // return $defaultStyle->getFill()->setFillType(Fill::FILL_SOLID);
-
-        // Or return the styles array
         return [
             'font' => [
                 'name' => 'Calibri',
                 'size' => 11,
-
             ],
         ];
     }
 
     public function view(): View
-{
-    $jabatan = hubunganjabatan::with('datajabatan', 'data_korelasi', 'data_biodata', 'data_kompetensi.data_kompetensi', 'standarkompetensi')
-        ->filter(request(['search']))
-        ->paginate(20)
-        ->withQueryString();
-    
-    $biodata = BiodataJabatanModel::get();
-    
-  
-    
-    return view('admin.laporan.excel1', [
-        
-        'jabatan' => $jabatan,
-        
-        'biodata' => $biodata,
-        'active' => 'laporan',
-    ]);
-}
-
-
-    
+    {   
+        return view('admin.laporan.excel1', [
+            'dinas_id' => $this->dinas_id,
+            'active' => 'laporan',
+        ]);
+    }   
 }
 

@@ -128,8 +128,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/cetak-laporan-rekap', [LaporanController::class, 'rekapitulasi']);
     Route::get('/laporan-biodata', [LaporanController::class, 'indexrekapbiodatajabatan']);
     Route::get('/detail_rekap_biodata/{id}', [LaporanController::class, 'detailrekapbiodata']);
-    Route::get('/cetak-laporan-biodata', [LaporanController::class, 'biodata']);
+    Route::get('/cetak-laporan-biodata/{id}', [LaporanController::class, 'biodata']);
     Route::get('/peta-jabatan', [PetaJabatanController::class, 'index']);
     Route::get('/detail_peta/{id}', [PetaJabatanController::class, 'detail']);
-    Route::get('/cetak-peta', [PetaJabatanController::class, 'peta']);
+    Route::get('/cetak-peta/{id}', [PetaJabatanController::class, 'peta']);
 });

@@ -65,37 +65,15 @@
               </thead>
               <tbody>
                 @foreach ($jabatan as $index)
-                
-                @php
-                $total = 0;
-                $tp_total = 0;
-                @endphp
-                
-                @foreach ($index->data_faktor as $data)
-                @php
-                $total += $data->data_faktor->nilai;
-                @endphp
-                @endforeach
-
-                @foreach ($index->data_beban_kerja as $beban)
-                @php
-                $tp_total += ($beban->penyelesaian / 1250) * $beban->jumlah_hasil;
-                @endphp
-                @endforeach
-
-                {{-- {{ dd($tp_total) }} --}}
-                <tr>
-                  <th>{{ $index->kode_jabatan }}</th>
-                  
-                  <th>{{ $index->datajabatan->nama_jabatan }}</th>
-                  <th class="text-center">@php if($index->standarkompetensi != NULL){
-                    echo str_replace("Jabatan ", '', $index->standarkompetensi->kelompok_jabatan);
-                    }; @endphp </th>
-                  <th class="text-center">{{ kelasjabatan2($total) }}</th>
-                  <th class="text-center">{{ $index->pegawai }}</th>
-                  <th class="text-center">{{ round($tp_total, 0, PHP_ROUND_HALF_EVEN) }}</th>
-                  <th class="text-center">{{ round($index->pegawai - $tp_total, 0, PHP_ROUND_HALF_EVEN) }}</th>
-                </tr>
+                  <tr>
+                    <th>{{ $index->kode_jabatan }}</th>
+                    <th>{{ $index->datajabatan->nama_jabatan }}</th>
+                    <th class="text-center">{{ $index->kelompok_jabatan }}</th>
+                    <th class="text-center">{{ kelasjabatan2($index->total) }}</th>
+                    <th class="text-center">{{ $index->pegawai }}</th>
+                    <th class="text-center">{{ round($index->tp_total, 0, PHP_ROUND_HALF_EVEN) }}</th>
+                    <th class="text-center">{{ round($index->pegawai - $index->tp_total, 0, PHP_ROUND_HALF_EVEN) }}</th>
+                  </tr>
                 @endforeach
               </tbody>
             </table>
