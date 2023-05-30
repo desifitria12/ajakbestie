@@ -131,5 +131,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/cetak-laporan-biodata', [LaporanController::class, 'biodata']);
     Route::get('/peta-jabatan', [PetaJabatanController::class, 'index']);
     Route::get('/detail_peta/{id}', [PetaJabatanController::class, 'detail']);
-    Route::get('/cetak-peta', [PetaJabatanController::class, 'peta']);
+    Route::get('/cetak-peta/{id}', [PetaJabatanController::class, 'peta']);
 });

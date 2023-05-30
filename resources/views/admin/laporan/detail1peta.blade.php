@@ -14,9 +14,11 @@
               <div class="col-md-6 offset-md-3 text-center">
                 <h3>{{('Peta Jabatan '. $namaopd) }}</h3>
               </div>
+              @if (!empty($jabatan_hierarchy))
               <div class="col-md-3 text-right">
-                <a href="/cetak-peta" class="btn btn-md btn-default p-2"><i class="fa fa-file-pdf"></i> Download</a>
+                <a href="/cetak-peta/{{ $dinas_id }}" class="btn btn-md btn-default p-2"><i class="fa fa-file-pdf"></i> Download</a>
               </div>
+              @endif
             </div>
           </div>
         </div>
@@ -26,27 +28,6 @@
             margin: 0 auto; /* Pusatkan kontainer tabel secara horizontal */
           }
         </style>
-        
-        <div class="card-body">
-          <div class="card-header bg-white border-0">
-            <div class="container">
-                <div class="table-responsive">
-                  <div class="table-container">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th class="resizeable">Nama Jabatan</th>
-                          <th class="resizeable">Bazeting</th>
-                          <th class="resizeable">Formasi/ABK</th>
-                          <th class="resizeable">Ket. +/-</th>
-                        </tr>
-                      </thead>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
         @if (!empty($jabatan_hierarchy))
 
