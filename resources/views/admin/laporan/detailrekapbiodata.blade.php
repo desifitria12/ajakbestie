@@ -14,7 +14,7 @@
               <h3 class="mb-0">{{ __('Di Lingkungan '. $namaopd) }} </h3>
             </div>
             <div class="col-4 text-right">
-              <a href="/cetak-laporan-biodata" class="btn btn-md btn-default p-2 "><i class="fa fa-file-excel"></i>
+              <a href="/cetak-laporan-biodata/{{ $dinas_id }}" class="btn btn-md btn-default p-2 "><i class="fa fa-file-excel"></i>
                 Download</a>
             </div>
             {{-- <div class="col-4 text-right">
@@ -68,36 +68,16 @@
                 </tr>
               </thead>
               <tbody>
-                @foreach ($jabatan as $index)
-                @foreach($biodata as $databio)
-                @php
-                $total = 0;
-                $tp_total = 0;
-                @endphp
-                
-                @foreach ($index->data_faktor as $data)
-                @php
-                $total += $data->data_faktor->nilai;
-                @endphp
-                @endforeach
-
-               
-                {{-- {{ dd($tp_total) }} --}}
-                @if(($databio->kode_jabatan == $index->kode_jabatan) && ($index->dinas_id == $dinas_id))
-                <tr>
-                  <th>{{ $index->kode_jabatan }}</th>
-                  <th>{{ $index->datajabatan->nama_jabatan }}</th>
-                  <th>{{ $index->datajabatan->nama_unit }}</th>
-                  
-                  <th class="text-center">{{ kelasjabatan2($total) }}</th>
-                  
-                  <th class="text-center">{{  $databio->nama}}</th>
-                  <th class="text-center">{{  $databio->nip}}</th>
-                  <th class="text-center">{{  $index->standarkompetensi->pangkat}}</th>
-
-                </tr>
-                @endif
-                @endforeach
+                @foreach (biodataByJabatan($dinas_id) as $data)
+                    <tr>
+                        <th>{{ $data['jabatan']->kode_jabatan }}</th>
+                        <th>{{ $data['jabatan']->datajabatan->nama_jabatan }}</th>
+                        <th>{{ $data['jabatan']->datajabatan->nama_unit }}</th>
+                        <th class="text-center">{{ kelasjabatan2($data['total']) }}</th>
+                        <th class="text-center">{{  $data['biodata']->nama}}</th>
+                        <th class="text-center">{{  $data['biodata']->nip}}</th>
+                        {{-- <th>{{ $data['jabatan']->standarkompetensi->pangkat }}</th> --}}
+                    </tr>
                 @endforeach
               </tbody>
              
@@ -135,7 +115,7 @@
         </div>
         <div class="card-footer">
           <div class="d-flex justify-content-center">
-            {{ $jabatan->onEachSide(0)->links() }}
+            {{ biodataByJabatan($dinas_id)->onEachSide(0)->links() }}
           </div>
         </div>
       </div>
